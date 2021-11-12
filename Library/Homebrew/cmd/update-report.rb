@@ -110,25 +110,6 @@ module Homebrew
     updated = false
     new_repository_version = nil
 
-    initial_revision = ENV["HOMEBREW_UPDATE_BEFORE"].to_s
-    current_revision = ENV["HOMEBREW_UPDATE_AFTER"].to_s
-    odie "update-report should not be called directly!" if initial_revision.empty? || current_revision.empty?
-
-    if initial_revision != current_revision
-      update_preinstall_header args: args
-      puts_stdout_or_stderr \
-        "Updated Homebrew from #{shorten_revision(initial_revision)} to #{shorten_revision(current_revision)}."
-      updated = true
-
-      old_tag = Settings.read "latesttag"
-
-      new_tag = Utils.popen_read(
-        "git", "-C", HOMEBREW_REPOSITORY, "tag", "--list", "--sort=-version:refname", "*.*"
-      ).lines.first.chomp
-
-      new_repository_version = new_tag if new_tag != old_tag
-    end
-
     Homebrew.failed = true if ENV["HOMEBREW_UPDATE_FAILED"]
     return if ENV["HOMEBREW_DISABLE_LOAD_FORMULA"]
 
@@ -224,7 +205,7 @@ module Homebrew
     end
 
     Commands.rebuild_commands_completion_list
-    link_completions_manpages_and_docs
+    # link_completions_manpages_and_docs
     Tap.each(&:link_completions_and_manpages)
 
     failed_fetch_dirs = ENV["HOMEBREW_MISSING_REMOTE_REF_DIRS"]&.split("\n")

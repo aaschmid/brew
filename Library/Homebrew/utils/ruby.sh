@@ -61,6 +61,9 @@ need_vendored_ruby() {
 # HOMEBREW_LINUX is set by brew.sh
 # shellcheck disable=SC2154
 setup-ruby-path() {
+  export HOMEBREW_RUBY_PATH="${pkgs.ruby}/bin/ruby"
+  return
+
   local vendor_dir
   local vendor_ruby_root
   local vendor_ruby_path

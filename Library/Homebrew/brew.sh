@@ -360,7 +360,7 @@ setup_curl() {
   then
     HOMEBREW_CURL="${HOMEBREW_CURL_PATH}"
   else
-    HOMEBREW_CURL="curl"
+    HOMEBREW_CURL="${pkgs.curl}/bin/curl"
   fi
 }
 
@@ -375,7 +375,7 @@ setup_git() {
   then
     HOMEBREW_GIT="${HOMEBREW_GIT_PATH}"
   else
-    HOMEBREW_GIT="git"
+    HOMEBREW_GIT="${pkgs.git}/bin/git"
   fi
 }
 
