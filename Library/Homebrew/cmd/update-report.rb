@@ -104,8 +104,8 @@ module Homebrew
     updated = false
     new_tag = nil
 
-    initial_revision = ENV["HOMEBREW_UPDATE_BEFORE"].to_s
-    current_revision = ENV["HOMEBREW_UPDATE_AFTER"].to_s
+    initial_revision = "@version@"
+    current_revision = "@version@"
     odie "update-report should not be called directly!" if initial_revision.empty? || current_revision.empty?
 
     if initial_revision != current_revision
@@ -253,7 +253,6 @@ module Homebrew
     end
 
     Commands.rebuild_commands_completion_list
-    link_completions_manpages_and_docs
     Tap.each(&:link_completions_and_manpages)
 
     failed_fetch_dirs = ENV["HOMEBREW_MISSING_REMOTE_REF_DIRS"]&.split("\n")

@@ -478,8 +478,8 @@ setup_git() {
   fi
 }
 
-setup_curl
-setup_git
+HOMEBREW_CURL="@curl@/bin/curl"
+HOMEBREW_GIT="@git@/bin/git"
 
 HOMEBREW_VERSION="$("${HOMEBREW_GIT}" -C "${HOMEBREW_REPOSITORY}" describe --tags --dirty --abbrev=7 2>/dev/null)"
 HOMEBREW_USER_AGENT_VERSION="${HOMEBREW_VERSION}"
@@ -996,7 +996,7 @@ then
 
 else
   source "${HOMEBREW_LIBRARY}/Homebrew/utils/ruby.sh"
-  setup-ruby-path
+  HOMEBREW_RUBY_PATH="@ruby@/bin/ruby"
 
   # Unshift command back into argument list (unless argument list was empty).
   [[ "${HOMEBREW_ARG_COUNT}" -gt 0 ]] && set -- "${HOMEBREW_COMMAND}" "$@"

@@ -361,17 +361,6 @@ module Homebrew
           Keg::MUST_BE_WRITABLE_DIRECTORIES.select(&:exist?)
                                            .reject(&:writable_real?)
         return if not_writable_dirs.empty?
-
-        <<~EOS
-          The following directories are not writable by your user:
-          #{not_writable_dirs.join("\n")}
-
-          You should change the ownership of these directories to your user.
-            sudo chown -R #{current_user} #{not_writable_dirs.join(" ")}
-
-          And make sure that your user has write permission.
-            chmod u+w #{not_writable_dirs.join(" ")}
-        EOS
       end
 
       def check_multiple_cellars
