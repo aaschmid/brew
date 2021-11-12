@@ -30,25 +30,6 @@ git() {
 
 git_init_if_necessary() {
   safe_cd "${HOMEBREW_REPOSITORY}"
-  if [[ ! -d ".git" ]]
-  then
-    set -e
-    trap '{ rm -rf .git; exit 1; }' EXIT
-    git init
-    git config --bool core.autocrlf false
-    if [[ "${HOMEBREW_BREW_DEFAULT_GIT_REMOTE}" != "${HOMEBREW_BREW_GIT_REMOTE}" ]]
-    then
-      echo "HOMEBREW_BREW_GIT_REMOTE set: using ${HOMEBREW_BREW_GIT_REMOTE} for Homebrew/brew Git remote URL."
-    fi
-    git config remote.origin.url "${HOMEBREW_BREW_GIT_REMOTE}"
-    git config remote.origin.fetch "+refs/heads/*:refs/remotes/origin/*"
-    git fetch --force --tags origin
-    git remote set-head origin --auto >/dev/null
-    git reset --hard origin/master
-    SKIP_FETCH_BREW_REPOSITORY=1
-    set +e
-    trap - EXIT
-  fi
 
   [[ -d "${HOMEBREW_LIBRARY}/Taps/homebrew/homebrew-core" ]] || return
   safe_cd "${HOMEBREW_LIBRARY}/Taps/homebrew/homebrew-core"
@@ -349,27 +330,6 @@ EOS
     fi
   fi
 
-  # check permissions
-  if [[ -e "${HOMEBREW_CELLAR}" && ! -w "${HOMEBREW_CELLAR}" ]]
-  then
-    odie <<EOS
-${HOMEBREW_CELLAR} is not writable. You should change the
-ownership and permissions of ${HOMEBREW_CELLAR} back to your
-user account:
-  sudo chown -R \$(whoami) ${HOMEBREW_CELLAR}
-EOS
-  fi
-
-  if [[ ! -w "${HOMEBREW_REPOSITORY}" ]]
-  then
-    odie <<EOS
-${HOMEBREW_REPOSITORY} is not writable. You should change the
-ownership and permissions of ${HOMEBREW_REPOSITORY} back to your
-user account:
-  sudo chown -R \$(whoami) ${HOMEBREW_REPOSITORY}
-EOS
-  fi
-
   # we may want to use a Homebrew curl
   if [[ -n "${HOMEBREW_FORCE_BREWED_CURL}" &&
       ! -x "${HOMEBREW_PREFIX}/opt/curl/bin/curl" ]]
@@ -491,8 +451,8 @@ EOS
   # kill all of subprocess on interrupt
   trap '{ /usr/bin/pkill -P $$; wait; exit 130; }' SIGINT
 
-  local update_failed_file="${HOMEBREW_REPOSITORY}/.git/UPDATE_FAILED"
-  local missing_remote_ref_dirs_file="${HOMEBREW_REPOSITORY}/.git/FAILED_FETCH_DIRS"
+  local update_failed_file="$varDir/tmp/HOMEBREW_UPDATE_FAILED"
+  local missing_remote_ref_dirs_file="$varDir/tmp/HOMEBREW_FAILED_FETCH_DIRS"
   rm -f "${update_failed_file}"
   rm -f "${missing_remote_ref_dirs_file}"
 
@@ -585,7 +545,7 @@ EOS
         echo "Fetching ${DIR}..."
       fi
 
-      local tmp_failure_file="${HOMEBREW_REPOSITORY}/.git/TMP_FETCH_FAILURES"
+      local tmp_failure_file="$varDir/tmp/HOMEBREW_FETCH_FAILURES"
       rm -f "${tmp_failure_file}"
 
       if [[ -n "${HOMEBREW_UPDATE_PREINSTALL}" ]]

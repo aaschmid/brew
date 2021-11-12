@@ -289,7 +289,7 @@ elif [[ -n "${HOMEBREW_DEVELOPER}" && -x "${HOMEBREW_CURL_PATH}" ]]
 then
   HOMEBREW_CURL="${HOMEBREW_CURL_PATH}"
 else
-  HOMEBREW_CURL="curl"
+  HOMEBREW_CURL="${pkgs.curl}/bin/curl"
 fi
 
 # This is set by the user environment.
@@ -303,7 +303,7 @@ elif [[ -n "${HOMEBREW_DEVELOPER}" && -x "${HOMEBREW_GIT_PATH}" ]]
 then
   HOMEBREW_GIT="${HOMEBREW_GIT_PATH}"
 else
-  HOMEBREW_GIT="git"
+  HOMEBREW_GIT="${pkgs.git}/bin/git"
 fi
 
 HOMEBREW_VERSION="$("${HOMEBREW_GIT}" -C "${HOMEBREW_REPOSITORY}" describe --tags --dirty --abbrev=7 2>/dev/null)"
